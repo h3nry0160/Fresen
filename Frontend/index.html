@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head><meta charset="UTF-8">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#f4f0e7">
+    <meta name="theme-color" content="#eef6ff">
     <title>Fresen — Phân tích độ tươi bằng màng nhạy pH</title>
-    <link rel="stylesheet" href="/static/style.css?v=4">
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=jk5_L1iNUUwnsrAjaSDFUXghkPqPZjVYfxJK62Z821L1c6O5ap2i86jUqDtINLLuZ2mgL9FDstLfpBK5yAsf89yAqoODziCy80j55OrQrfokJksMxmtL758TMkgilScZNQ2nSY8CTeE2EPJkOq38XdT2RdVvTUtoC204EZIosjf5MY19XZWdOVyP13c8BECNifO_ZznWEzhryqoe09pihkrzIOqb_i7jguzBe6Z7bKHiniY3YWX7C_kiEmOxp2SKA7nHJvMA3T0JQ-ueMxPYwg" charset="UTF-8"></script></head>
+    <link rel="stylesheet" href="/static/style.css?v=7">
+</head>
 <body>
 <header class="header">
     <div class="brand">
-        <h1>Fresen</h1>
-        <p>pH-sensitive freshness analysis</p>
+        <div class="brand-mark">F</div>
+        <div>
+            <h1>Fresen</h1>
+            <p>pH-sensitive freshness analysis</p>
+        </div>
     </div>
     <nav class="nav" aria-label="Điều hướng chính">
         <button class="nav-btn active" data-page="home">Trang chủ</button>
@@ -23,28 +27,60 @@
 <main>
     <section id="home" class="page active">
         <div class="hero">
-            <span class="eyebrow">DỰ ÁN NGHIÊN CỨU KHOA HỌC</span>
-            <h2>Đọc biến đổi màu của màng anthocyanin để hỗ trợ đánh giá độ tươi thực phẩm</h2>
-            <p>Fresen so sánh màu giữa màng chuẩn và màng sau tiếp xúc thực phẩm trong không gian CIELAB, tính ΔE (CIE76), rồi suy ra nồng độ N từ đường chuẩn thực nghiệm.</p>
-            <button class="button primary" data-go="capture">Bắt đầu phân tích</button>
+            <div class="hero-glow hero-glow-one"></div>
+            <div class="hero-glow hero-glow-two"></div>
+            <div class="hero-content">
+                <span class="eyebrow">DỰ ÁN NGHIÊN CỨU KHOA HỌC</span>
+                <h2>Phân tích biến đổi màu màng anthocyanin để hỗ trợ đánh giá độ tươi thực phẩm</h2>
+                <p>Fresen so sánh màu giữa màng chuẩn và màng sau khi tiếp xúc thực phẩm trong không gian CIELAB, tính ΔE (CIE76), rồi suy ra nồng độ N từ đường chuẩn thực nghiệm.</p>
+                <div class="hero-actions">
+                    <button class="button primary hero-button" data-go="capture">Bắt đầu phân tích</button>
+                    <button class="button ghost" data-go="calibration">Xem đường chuẩn</button>
+                </div>
+                <div class="hero-tags" aria-label="Công nghệ chính">
+                    <span>CIELAB</span><span>CIE76</span><span>OpenCV</span><span>FastAPI</span><span>Cloud</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-intro">
+            <span class="eyebrow blue">QUY TRÌNH</span>
+            <h2>Fresen hoạt động như thế nào?</h2>
         </div>
 
         <div class="info-grid">
-            <article class="info-card"><span>01</span><h3>Chọn ảnh</h3><p>Chụp hoặc tải ảnh màng chuẩn và ảnh mẫu cần kiểm tra.</p></article>
-            <article class="info-card"><span>02</span><h3>Chọn điểm</h3><p>Nhấn vào vùng màng cần đo. Crosshair lưu tọa độ theo tỉ lệ ảnh.</p></article>
-            <article class="info-card"><span>03</span><h3>Phân tích</h3><p>Backend Python lấy ROI quanh điểm, tính RGB → LAB → ΔE → nồng độ N.</p></article>
+            <article class="info-card info-blue"><span>01</span><h3>Chọn ảnh</h3><p>Chụp hoặc tải ảnh màng chuẩn và ảnh mẫu cần kiểm tra.</p></article>
+            <article class="info-card info-violet"><span>02</span><h3>Chọn vùng đo</h3><p>Nhấn vào vùng màng đại diện. Hệ thống lưu tọa độ theo tỉ lệ ảnh để dùng được trên cả điện thoại và máy tính.</p></article>
+            <article class="info-card info-green"><span>03</span><h3>Phân tích</h3><p>Backend lấy ROI, tính RGB → CIELAB → ΔE → nồng độ N → trạng thái mẫu.</p></article>
+        </div>
+
+        <div class="flow-card">
+            <div class="flow-step"><strong>Ảnh chuẩn</strong><span>Reference</span></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step"><strong>ROI trung bình</strong><span>Vùng màu đại diện</span></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step"><strong>CIELAB + ΔE</strong><span>Độ lệch màu</span></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step"><strong>Đường chuẩn</strong><span>ΔE = aN + b</span></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step accent"><strong>Đánh giá mẫu</strong><span>N so với ngưỡng dự án</span></div>
         </div>
     </section>
 
     <section id="calibration" class="page">
-        <div class="page-header">
+        <div class="page-header page-header-blue">
             <span class="eyebrow">CALIBRATION</span>
             <h2>Tạo đường chuẩn</h2>
-            <p>Nhập các cặp giá trị nồng độ N đã biết và ΔE đo được. Tất cả điểm được lưu ở backend và dùng chung cho mọi lần phân tích.</p>
+            <p>Nhập các cặp giá trị nồng độ N đã biết và ΔE đo được. Các điểm được lưu ở backend và dùng để xây dựng mô hình hồi quy tuyến tính.</p>
         </div>
 
-        <div class="card">
-            <h3>Thêm điểm thực nghiệm</h3>
+        <div class="card accent-card blue-card">
+            <div class="card-heading">
+                <div>
+                    <span class="mini-badge">DỮ LIỆU THỰC NGHIỆM</span>
+                    <h3>Thêm điểm đường chuẩn</h3>
+                </div>
+            </div>
             <div class="form-grid">
                 <div class="form-group">
                     <label for="calN">Nồng độ N (mg/100g)</label>
@@ -56,32 +92,32 @@
                 </div>
             </div>
             <div class="button-row">
-                <button id="addCalPoint" class="button primary">Thêm điểm</button>
+                <button id="addCalPoint" class="button primary">+ Thêm điểm</button>
                 <button id="clearCalibration" class="button danger">Xóa toàn bộ</button>
             </div>
-            <p class="hint">Trong phiên bản này, nồng độ N được dùng thống nhất theo đơn vị mg/100g để so sánh với ngưỡng 30 mg/100g của dự án.</p>
+            <p class="hint">Nồng độ N được dùng thống nhất theo đơn vị mg/100g để so sánh với ngưỡng 30 mg/100g của dự án.</p>
         </div>
 
         <div class="card">
-            <h3>Dữ liệu đường chuẩn</h3>
-            <div id="calibrationTable" class="table-wrapper"><p class="hint">Đang tải...</p></div>
+            <div class="card-heading"><h3>Dữ liệu đường chuẩn</h3><span class="mini-badge soft-blue">TABLE</span></div>
+            <div id="calibrationTable" class="table-wrapper"><p class="hint">Đang tải dữ liệu...</p></div>
         </div>
 
-        <div class="card">
-            <h3>Đồ thị ΔE theo nồng độ N</h3>
+        <div class="card chart-card">
+            <div class="card-heading"><h3>Đồ thị ΔE theo nồng độ N</h3><span class="mini-badge soft-green">REGRESSION</span></div>
             <canvas id="calibrationChart"></canvas>
             <div id="regressionInfo" class="result-box">Chưa đủ dữ liệu hồi quy.</div>
         </div>
     </section>
 
     <section id="capture" class="page">
-        <div class="page-header">
+        <div class="page-header page-header-orange">
             <span class="eyebrow">ANALYSIS</span>
             <h2>Phân tích mẫu</h2>
-            <p>Để ΔE có ý nghĩa, Fresen yêu cầu cả ảnh reference và ảnh sample, đồng thời mỗi ảnh phải có một điểm được chọn.</p>
+            <p>Chọn một ảnh màng chuẩn và một ảnh màng sau khi tiếp xúc thực phẩm. Với mỗi ảnh, hãy chọn vùng màu đại diện để hệ thống tính ΔE và suy ra nồng độ N.</p>
         </div>
 
-        <div class="card">
+        <div class="card accent-card orange-card">
             <div class="form-group">
                 <label for="sampleName">Tên mẫu</label>
                 <input id="sampleName" type="text" maxlength="80" placeholder="Ví dụ: Cá — 6 giờ bảo quản">
@@ -89,13 +125,13 @@
         </div>
 
         <div class="image-grid">
-            <div class="card">
-                <h3>1. Ảnh reference</h3>
-                <p class="hint">Mẫu màng chuẩn/baseline. Chọn đúng vùng đại diện của màng.</p>
+            <div class="card image-card reference-card">
+                <div class="card-heading"><h3>1. Ảnh chuẩn (reference)</h3><span class="mini-badge soft-blue">BASELINE</span></div>
+                <p class="hint">Mẫu màng ban đầu. Chọn vùng có màu đại diện và ít bóng sáng.</p>
                 <div class="upload-shell" id="referenceDropArea">
-                    <div id="referencePlaceholder" class="placeholder"><strong>Chưa có ảnh reference</strong><span>JPG, PNG, WEBP</span></div>
+                    <div id="referencePlaceholder" class="placeholder"><div class="upload-icon">↑</div><strong>Chưa có ảnh chuẩn</strong><span>JPG, PNG, WEBP</span></div>
                     <div id="referenceImageSelector" class="image-selector hidden">
-                        <img id="referencePreview" alt="Ảnh reference">
+                        <img id="referencePreview" alt="Ảnh màng chuẩn">
                         <div id="referenceCrosshair" class="crosshair hidden"><i></i><b></b><em></em></div>
                     </div>
                 </div>
@@ -103,16 +139,16 @@
                     <label class="button secondary">Chụp ảnh<input id="referenceCameraInput" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden></label>
                     <label class="button secondary">Chọn từ thư viện<input id="referenceInput" type="file" accept="image/jpeg,image/png,image/webp" hidden></label>
                 </div>
-                <div id="referenceSelectionStatus" class="selection-status">Chưa chọn điểm.</div>
+                <div id="referenceSelectionStatus" class="selection-status">Chưa chọn vùng đo.</div>
             </div>
 
-            <div class="card">
-                <h3>2. Ảnh sample</h3>
-                <p class="hint">Màng sau khi tiếp xúc môi trường/thực phẩm. Chọn vùng tương ứng.</p>
+            <div class="card image-card sample-card">
+                <div class="card-heading"><h3>2. Ảnh mẫu (sample)</h3><span class="mini-badge soft-orange">TEST</span></div>
+                <p class="hint">Màng sau khi tiếp xúc thực phẩm. Chọn vùng tương ứng với vị trí ở ảnh chuẩn.</p>
                 <div class="upload-shell" id="sampleDropArea">
-                    <div id="samplePlaceholder" class="placeholder"><strong>Chưa có ảnh sample</strong><span>JPG, PNG, WEBP</span></div>
+                    <div id="samplePlaceholder" class="placeholder"><div class="upload-icon">↑</div><strong>Chưa có ảnh mẫu</strong><span>JPG, PNG, WEBP</span></div>
                     <div id="sampleImageSelector" class="image-selector hidden">
-                        <img id="preview" alt="Ảnh sample">
+                        <img id="preview" alt="Ảnh màng mẫu">
                         <div id="sampleCrosshair" class="crosshair hidden"><i></i><b></b><em></em></div>
                     </div>
                 </div>
@@ -120,34 +156,52 @@
                     <label class="button secondary">Chụp ảnh<input id="cameraInput" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden></label>
                     <label class="button secondary">Chọn từ thư viện<input id="galleryInput" type="file" accept="image/jpeg,image/png,image/webp" hidden></label>
                 </div>
-                <div id="sampleSelectionStatus" class="selection-status">Chưa chọn điểm.</div>
+                <div id="sampleSelectionStatus" class="selection-status">Chưa chọn vùng đo.</div>
             </div>
         </div>
 
-        <div class="card compact-card">
+        <div class="card compact-card roi-card">
             <div class="form-group radius-control">
-                <label for="roiRadius">Kích thước vùng lấy trung bình quanh crosshair</label>
+                <label for="roiRadius">Kích thước vùng lấy trung bình quanh tâm chọn</label>
                 <input id="roiRadius" type="range" min="0.5" max="5" step="0.5" value="1.5">
                 <span><strong id="roiRadiusLabel">1.5%</strong> cạnh ngắn của ảnh</span>
             </div>
         </div>
 
-        <div class="card">
-            <button id="analyzeBtn" class="button primary full" disabled>Phân tích độ tươi</button>
-            <div id="apiStatus" class="api-status">Đang kiểm tra backend...</div>
+        <div class="card analyze-card">
+            <button id="analyzeBtn" class="button primary full analyze-button" disabled>Phân tích độ tươi</button>
+            <div id="apiStatus" class="api-status">Đang kiểm tra kết nối máy chủ...</div>
         </div>
 
-        <div id="resultSection" class="card hidden">
-            <h3>Kết quả phân tích</h3>
-            <div class="result-grid">
-                <div class="result-card"><span>RGB sample</span><strong id="rgbResult">—</strong></div>
-                <div class="result-card"><span>LAB sample</span><strong id="labResult">—</strong></div>
-                <div class="result-card"><span>ΔE (CIE76)</span><strong id="deltaEResult">—</strong></div>
-                <div class="result-card"><span>Nồng độ N suy ra</span><strong id="nResult">—</strong></div>
-                <div class="result-card"><span>Ngưỡng N của dự án</span><strong id="thresholdResult">30 mg/100g</strong></div>
-                <div class="result-card"><span>Đánh giá mẫu</span><strong id="freshnessResult">—</strong></div>
+        <div id="resultSection" class="card result-section hidden">
+            <div class="result-header">
+                <div>
+                    <span class="eyebrow orange">KẾT QUẢ</span>
+                    <h3>Kết quả phân tích</h3>
+                </div>
+                <span class="result-chip">CIE76</span>
             </div>
-            <div id="resultMessage" class="result-message"></div>
+
+            <div class="result-grid">
+                <div class="result-card result-blue"><span>RGB mẫu</span><strong id="rgbResult">—</strong></div>
+                <div class="result-card result-violet"><span>CIELAB mẫu</span><strong id="labResult">—</strong></div>
+                <div class="result-card result-orange"><span>ΔE (CIE76)</span><strong id="deltaEResult">—</strong></div>
+                <div class="result-card result-cyan"><span>Nồng độ N suy ra</span><strong id="nResult">—</strong></div>
+                <div class="result-card result-gray"><span>Ngưỡng N an toàn</span><strong id="thresholdResult">30 mg/100g</strong></div>
+                <div class="result-card result-green"><span>Đánh giá mẫu</span><strong id="freshnessResult">—</strong></div>
+            </div>
+
+            <div id="freshnessAlert" class="freshness-alert alert-neutral" role="status" aria-live="polite">
+                <div id="freshnessAlertIcon" class="alert-icon">i</div>
+                <div class="alert-copy">
+                    <span class="alert-kicker">CẢNH BÁO ĐỘ TƯƠI</span>
+                    <strong id="freshnessAlertTitle">Chưa có kết quả đánh giá</strong>
+                    <p id="resultMessage">Kết quả và cảnh báo sẽ xuất hiện tại đây sau khi phân tích.</p>
+                </div>
+            </div>
+
+            <div class="project-note">Kết quả được diễn giải theo ngưỡng của dự án và không thay thế kiểm nghiệm an toàn thực phẩm chuyên môn.</div>
+
             <details class="technical-details">
                 <summary>Thông số kỹ thuật</summary>
                 <pre id="technicalResult"></pre>
@@ -156,10 +210,10 @@
     </section>
 
     <section id="history" class="page">
-        <div class="page-header">
+        <div class="page-header page-header-violet">
             <span class="eyebrow">HISTORY</span>
             <h2>Lịch sử phân tích</h2>
-            <p>Lịch sử chỉ lưu trên trình duyệt của thiết bị hiện tại; dữ liệu đường chuẩn thì lưu ở backend.</p>
+            <p>Lịch sử chỉ lưu trên trình duyệt của thiết bị hiện tại; dữ liệu đường chuẩn được lưu ở backend.</p>
         </div>
         <div class="card">
             <div class="button-row">
@@ -171,7 +225,9 @@
     </section>
 </main>
 
-<footer class="footer">Fresen — Scientific Research Prototype</footer>
-<script src="/static/app.js?v=4"></script>
+<footer class="footer">
+    <strong>Fresen</strong><span>Scientific Research Prototype · CIELAB · CIE76 · FastAPI</span>
+</footer>
+<script src="/static/app.js?v=7"></script>
 </body>
 </html>

@@ -42,10 +42,10 @@ async function apiFetch(url, options = {}) {
 async function checkApi() {
     try {
         await apiFetch(`${API}/health`);
-        $("apiStatus").textContent = "Backend Python đã kết nối.";
+        $("apiStatus").textContent = "Máy chủ Fresen đã sẵn sàng.";
         $("apiStatus").className = "api-status ok";
     } catch (error) {
-        $("apiStatus").textContent = "Không kết nối được backend. Hãy chạy FastAPI bằng uvicorn.";
+        $("apiStatus").textContent = "Không kết nối được máy chủ Fresen. Vui lòng tải lại trang sau ít phút.";
         $("apiStatus").className = "api-status error";
     }
 }
@@ -82,7 +82,7 @@ function setImage(kind, file) {
         selector.classList.remove("hidden");
         placeholder.classList.add("hidden");
         crosshair.classList.add("hidden");
-        status.textContent = "Nhấn vào vùng màng cần phân tích.";
+        status.textContent = "Nhấn vào vùng màu đại diện của màng.";
         updateAnalyzeButton();
     };
 }
@@ -129,7 +129,7 @@ function bindPointSelection(kind, imageId, crosshairId, statusId) {
         if (!point) return;
         state[kind === "sample" ? "samplePoint" : "referencePoint"] = point;
         positionCrosshair($(crosshairId), $(imageId), point);
-        $(statusId).textContent = `Đã chọn X ${(point.xRatio * 100).toFixed(1)}% · Y ${(point.yRatio * 100).toFixed(1)}%`;
+        $(statusId).textContent = `Đã chọn vùng đo · X ${(point.xRatio * 100).toFixed(1)}% · Y ${(point.yRatio * 100).toFixed(1)}%`;
         updateAnalyzeButton();
     });
 }
@@ -250,17 +250,17 @@ function drawCalibrationChart() {
     const x = v => pad.l + (v - minN) / (maxN - minN) * (width - pad.l - pad.r);
     const y = v => height - pad.b - (v - minDE) / (maxDE - minDE) * (height - pad.t - pad.b);
 
-    ctx.strokeStyle = "#8f887b"; ctx.lineWidth = 1;
+    ctx.strokeStyle = "#9cafc7"; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, height - pad.b); ctx.lineTo(width - pad.r, height - pad.b); ctx.stroke();
-    ctx.fillStyle = "#625f59"; ctx.font = "12px sans-serif";
+    ctx.fillStyle = "#5d6d84"; ctx.font = "12px sans-serif";
     ctx.fillText("Nồng độ N", width - 90, height - 14); ctx.fillText("ΔE", 18, 24);
 
-    ctx.fillStyle = "#56633f";
+    ctx.fillStyle = "#2563eb";
     points.forEach(p => { ctx.beginPath(); ctx.arc(x(p.n), y(p.delta_e), 5, 0, Math.PI * 2); ctx.fill(); });
 
     if (state.model) {
         const m = state.model;
-        ctx.strokeStyle = "#7c8b63"; ctx.lineWidth = 2;
+        ctx.strokeStyle = "#14966f"; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.moveTo(x(minN), y(m.slope * minN + m.intercept)); ctx.lineTo(x(maxN), y(m.slope * maxN + m.intercept)); ctx.stroke();
     }
 }
@@ -293,7 +293,7 @@ $("analyzeBtn").addEventListener("click", async () => {
 
 function renderResult(result) {
     if (!result?.sample?.rgb || !result?.sample?.lab) {
-        throw new Error("Backend trả về kết quả không đầy đủ.");
+        throw new Error("Máy chủ trả về kết quả không đầy đủ.");
     }
 
     const rgb = result.sample.rgb;
@@ -309,8 +309,12 @@ function renderResult(result) {
     $("deltaEResult").textContent =
         Number.isFinite(deltaE) ? deltaE.toFixed(3) : "—";
 
+    const alertEl = $("freshnessAlert");
+    const alertIcon = $("freshnessAlertIcon");
+    const alertTitle = $("freshnessAlertTitle");
     const messageEl = $("resultMessage");
-    messageEl.classList.remove("result-safe", "result-danger", "result-warning");
+
+    alertEl.classList.remove("alert-neutral", "alert-safe", "alert-danger", "alert-warning");
 
     if (result.estimated_n) {
         const nValue = Number(result.estimated_n.value);
@@ -319,44 +323,55 @@ function renderResult(result) {
         $("nResult").textContent =
             Number.isFinite(nValue) ? `${nValue.toFixed(3)} mg/100g` : "—";
 
-        $("thresholdResult").textContent =
-            `${threshold.toFixed(0)} mg/100g`;
+        $("thresholdResult").textContent = `${threshold.toFixed(0)} mg/100g`;
 
-        const withinRange =
-            result.estimated_n.within_calibration_range === true;
-
+        const withinRange = result.estimated_n.within_calibration_range === true;
         const rangeMessage = withinRange
             ? "Giá trị nằm trong khoảng của đường chuẩn."
-            : "Cảnh báo: giá trị nằm ngoài khoảng đường chuẩn nên đây là phép ngoại suy.";
+            : "Lưu ý: giá trị nằm ngoài khoảng đường chuẩn nên kết quả đang được ngoại suy và có độ tin cậy thấp hơn.";
+
+        let assessmentMessage = "";
 
         if (result.freshness?.is_spoiled === true) {
             $("freshnessResult").textContent = "THỰC PHẨM HỎNG";
-            messageEl.classList.add("result-danger");
+            alertEl.classList.add("alert-danger");
+            alertIcon.textContent = "!";
+            alertTitle.textContent = "VƯỢT NGƯỠNG AN TOÀN — KHÔNG NÊN SỬ DỤNG";
+            assessmentMessage =
+                `Nồng độ N ước tính là ${nValue.toFixed(3)} mg/100g, vượt ngưỡng an toàn ${threshold.toFixed(0)} mg/100g. ` +
+                "Theo tiêu chí đánh giá của hệ thống, mẫu được xếp vào nhóm thực phẩm hỏng và không nên sử dụng.";
         } else if (result.freshness?.is_spoiled === false) {
             $("freshnessResult").textContent = "CÒN SỬ DỤNG";
-            messageEl.classList.add("result-safe");
+            alertEl.classList.add("alert-safe");
+            alertIcon.textContent = "✓";
+            alertTitle.textContent = "MẪU NẰM TRONG NGƯỠNG AN TOÀN";
+            assessmentMessage =
+                `Nồng độ N ước tính là ${nValue.toFixed(3)} mg/100g, không vượt ngưỡng an toàn ${threshold.toFixed(0)} mg/100g. ` +
+                "Theo tiêu chí đánh giá của hệ thống, mẫu hiện được xếp vào nhóm còn sử dụng.";
         } else {
             $("freshnessResult").textContent = "CHƯA ĐÁNH GIÁ";
-            messageEl.classList.add("result-warning");
+            alertEl.classList.add("alert-warning");
+            alertIcon.textContent = "?";
+            alertTitle.textContent = "CHƯA THỂ ĐÁNH GIÁ MẪU";
+            assessmentMessage = "Hệ thống chưa có đủ dữ liệu để đưa ra đánh giá độ tươi cho mẫu này.";
         }
 
-        messageEl.textContent =
-            `${result.freshness?.message ?? "Đã suy ra nồng độ N."} ` +
-            `N = ${nValue.toFixed(3)} mg/100g. ` +
-            `Ngưỡng = ${threshold.toFixed(0)} mg/100g. ` +
-            rangeMessage;
+        messageEl.textContent = `${assessmentMessage} ${rangeMessage}`;
     } else {
         $("nResult").textContent = "Chưa có đường chuẩn";
         $("thresholdResult").textContent = "30 mg/100g";
         $("freshnessResult").textContent = "CHƯA ĐÁNH GIÁ";
-        messageEl.classList.add("result-warning");
+        alertEl.classList.add("alert-warning");
+        alertIcon.textContent = "?";
+        alertTitle.textContent = "CHƯA THỂ SUY RA NỒNG ĐỘ N";
         messageEl.textContent =
             `Đã tính được ΔE = ${Number.isFinite(deltaE) ? deltaE.toFixed(3) : "—"}, ` +
-            "nhưng chưa thể suy ra nồng độ N. Hãy tạo đường chuẩn trước.";
+            "nhưng chưa thể suy ra nồng độ N. Hãy kiểm tra dữ liệu đường chuẩn.";
     }
 
     $("technicalResult").textContent = JSON.stringify(result, null, 2);
     $("resultSection").classList.remove("hidden");
+    $("resultSection").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function saveHistory(result) {
@@ -386,7 +401,7 @@ function renderHistory() {
             <p><strong>Thời gian:</strong> ${new Date(item.date).toLocaleString()}</p>
             <p><strong>ΔE:</strong> ${format(item.deltaE, 3)} · <strong>N:</strong> ${item.N == null ? "N/A" : format(item.N, 3) + " mg/100g"}</p>
             <p><strong>Trạng thái:</strong> ${item.freshnessStatus === "spoiled" ? "THỰC PHẨM HỎNG" : item.freshnessStatus === "usable" ? "CÒN SỬ DỤNG" : "CHƯA ĐÁNH GIÁ"}</p>
-            <p><strong>LAB:</strong> L* ${format(item.lab.L, 2)}, a* ${format(item.lab.a, 2)}, b* ${format(item.lab.b, 2)}</p>
+            <p><strong>CIELAB:</strong> L* ${format(item.lab.L, 2)}, a* ${format(item.lab.a, 2)}, b* ${format(item.lab.b, 2)}</p>
         </article>`).join("");
 }
 
