@@ -5,7 +5,6 @@ from color_analysis import rgb_to_lab, calculate_delta_e
 
 
 def decode_image(image_bytes: bytes) -> np.ndarray:
-    """Decode uploaded bytes into an OpenCV BGR image."""
     image_array = np.frombuffer(image_bytes, dtype=np.uint8)
     image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
     if image is None:
@@ -27,12 +26,7 @@ def extract_point_roi(
     radius_ratio: float = 0.015,
     min_radius_px: int = 4,
 ) -> tuple[np.ndarray, dict]:
-    """
-    Extract a square ROI around a point selected in the browser.
-
-    x_ratio/y_ratio are normalised coordinates (0..1), so the same point works
-    regardless of how large the image is displayed on phone or laptop.
-    """
+    
     x_ratio = _validate_ratio(x_ratio, "x_ratio")
     y_ratio = _validate_ratio(y_ratio, "y_ratio")
 
@@ -67,7 +61,7 @@ def extract_point_roi(
 
 
 def extract_average_rgb(bgr_roi: np.ndarray) -> tuple[float, float, float]:
-    """Return mean R, G, B values for an OpenCV BGR region."""
+    # Return mean R, G, B values for an OpenCV BGR region
     mean_b, mean_g, mean_r = cv2.mean(bgr_roi)[:3]
     return float(mean_r), float(mean_g), float(mean_b)
 
