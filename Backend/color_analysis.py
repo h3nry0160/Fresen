@@ -1,8 +1,7 @@
 import math
 
-
+// Chuyển từ hình ảnh có sRGB đã được gamma correction -> rgb tuyến tính
 def _srgb_channel_to_linear(value: float) -> float:
-    """Convert one sRGB channel (0..1) to linear RGB."""
     if value <= 0.04045:
         return value / 12.92
     return ((value + 0.055) / 1.055) ** 2.4
@@ -17,12 +16,7 @@ def _xyz_lab_f(value: float) -> float:
 
 
 def rgb_to_lab(r: float, g: float, b: float) -> tuple[float, float, float]:
-    """
-    Convert sRGB (0..255) to CIE L*a*b* using D65 white.
-
-    This avoids OpenCV's uint8 LAB quantisation and keeps the scientific
-    calculation explicit for easier explanation in a school research project.
-    """
+    
     r_lin = _srgb_channel_to_linear(max(0.0, min(255.0, r)) / 255.0)
     g_lin = _srgb_channel_to_linear(max(0.0, min(255.0, g)) / 255.0)
     b_lin = _srgb_channel_to_linear(max(0.0, min(255.0, b)) / 255.0)
@@ -49,7 +43,6 @@ def rgb_to_lab(r: float, g: float, b: float) -> tuple[float, float, float]:
 
 
 def calculate_delta_e(lab1: tuple[float, float, float], lab2: tuple[float, float, float]) -> float:
-    """Calculate CIE76 Delta E (Euclidean distance in CIELAB)."""
     L1, a1, b1 = lab1
     L2, a2, b2 = lab2
     return float(math.sqrt((L2 - L1) ** 2 + (a2 - a1) ** 2 + (b2 - b1) ** 2))
