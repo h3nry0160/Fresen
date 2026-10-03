@@ -23,15 +23,7 @@ from image_analysis import analyze_delta_e
 
 BASE_DIR = Path(__file__).resolve().parent
 
-# Render runs on Linux, so folder names are case-sensitive.
-# Support both lowercase/uppercase and both common project layouts:
-#
-# Fresen/
-# ├── Backend/
-# │   └── main.py
-# └── frontend/   (recommended)
-#
-# or Backend/frontend/
+
 _FRONTEND_CANDIDATES = [
     BASE_DIR.parent / "frontend",
     BASE_DIR.parent / "Frontend",
@@ -56,9 +48,8 @@ MAX_UPLOAD_BYTES = 15 * 1024 * 1024
 SAFE_N_THRESHOLD_MG_PER_100G = 30.0
 
 
-# ============================================================
 # FASTAPI APP
-# ============================================================
+
 
 app = FastAPI(
     title="Fresen API",
@@ -66,8 +57,6 @@ app = FastAPI(
     description="pH-sensitive food-film colour analysis API",
 )
 
-# Same-origin serving is used in the supplied project. CORS is kept permissive
-# during school-project development so a separate local frontend can still call it.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -77,9 +66,8 @@ app.add_middleware(
 )
 
 
-# ============================================================
+
 # REQUEST MODELS / HELPERS
-# ============================================================
 
 class CalibrationPointIn(BaseModel):
     n: float = Field(ge=0)
@@ -102,9 +90,7 @@ async def read_image(upload: UploadFile) -> bytes:
     return content
 
 
-# ============================================================
 # HEALTH
-# ============================================================
 
 @app.get("/api/health")
 def health():
@@ -115,9 +101,8 @@ def health():
     }
 
 
-# ============================================================
 # CALIBRATION API
-# ============================================================
+
 
 @app.get("/api/calibration")
 def get_calibration():
@@ -219,9 +204,7 @@ async def analyze(
         raise api_error(exc)
 
 
-# ============================================================
 # FRONTEND
-# ============================================================
 
 @app.get("/")
 def frontend_home():
