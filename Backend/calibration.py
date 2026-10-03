@@ -64,7 +64,7 @@ def clear_calibration_data() -> None:
 
 
 def calculate_calibration() -> dict | None:
-    """Fit ΔE = slope*N + intercept and return R². Needs >=2 points."""
+    # Fit ΔE = slope*N + intercept and return R². Needs >=2 points.
     data = load_calibration_data()
     if len(data) < 2:
         return None
