@@ -1,6 +1,5 @@
 import math
 
-// Chuyển từ hình ảnh có sRGB đã được gamma correction -> rgb tuyến tính
 def _srgb_channel_to_linear(value: float) -> float:
     if value <= 0.04045:
         return value / 12.92
